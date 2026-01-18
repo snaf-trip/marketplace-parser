@@ -53,28 +53,47 @@ def parse_ozon(driver):
 def parse_wildberries(driver):
     data = {"название": "", "цена": "", "оценка": "", "артикул": ""}
 
+    # 1) название (h3 с классом productTitle)
     try:
-        data["название"] = driver.find_element(By.TAG_NAME, "h3").text.strip()
+        el_name = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "h3.productTitle--J2W7I")
+            )
+        )
+        data["название"] = el_name.text.strip()
     except:
         pass
 
-    for el in driver.find_elements(By.TAG_NAME, "h2"):
-        txt = el.text.strip()
-        if "₽" in txt:
-            data["цена"] = txt
-            break
+    # 2) цена (h2 с классом productPrice)
+    try:
+        el_price = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "h2.mo-typography_variant_title2.mo-typography_color_danger")
+            )
+        )
+        data["цена"] = el_price.text.strip()
+    except:
+        pass
 
-    for el in driver.find_elements(By.TAG_NAME, "span"):
-        txt = el.text.strip()
-        if "·" in txt and "оцен" in txt:
-            data["оценка"] = txt.split("·")[0].strip()
-            break
+    # 3) оценка (span с классом productReviewRating)
+    try:
+        el_rating = driver.find_element(
+            By.CSS_SELECTOR, "span.productReviewRating--gQDQG"
+        )
+        data["оценка"] = el_rating.text.split("·")[0].strip()  # только рейтинг, без кол-ва оценок
+    except:
+        pass
 
-    for el in driver.find_elements(By.TAG_NAME, "span"):
-        txt = el.text.strip()
-        if txt.isdigit() and len(txt) >= 6:
-            data["артикул"] = txt
-            break
+    # 4) артикул — часто последний span с цифрами длиннее 6
+    try:
+        spans = driver.find_elements(By.TAG_NAME, "span")
+        for sp in spans[::-1]:  # идем с конца страницы
+            txt = sp.text.strip()
+            if txt.isdigit() and len(txt) >= 6:
+                data["артикул"] = txt
+                break
+    except:
+        pass
 
     return data
 
@@ -136,9 +155,9 @@ def parse_product_page(driver, url):
 
     driver.get(url)
 
-    WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.TAG_NAME, "h1"))
-    )
+    # WebDriverWait(driver, 20).until(
+    #     EC.presence_of_element_located((By.TAG_NAME, "h1"))
+    # )
 
     domain = get_root_domain(url)
 
@@ -190,7 +209,8 @@ def main():
     driver = uc.Chrome(options=options)
 
     # 🔥 Прогрев
-    for site in ["https://www.ozon.ru", "https://www.wildberries.ru", "https://market.yandex.ru"]:
+    # for site in ["https://www.ozon.ru", "https://www.wildberries.ru", "https://market.yandex.ru"]:
+    for site in ["https://www.wildberries.ru"]:
         driver.get(site)
         time.sleep(random.uniform(4, 6))
 
