@@ -1,4 +1,5 @@
 from get_ozon_article_from_url import get_ozon_article_from_url
+from get_yandex_article_from_url import get_yandex_market_article_from_url
 from parsers.ozon_parser import parse_ozon
 from parsers.wb_parser import parse_wildberries
 from parsers.yandex_market_parser import parse_yandex_market
@@ -25,6 +26,7 @@ MARKETPLACE_CONFIG = {
         "domain": "market.yandex.ru",
         "base_url": "https://market.yandex.ru",
         "parser": parse_yandex_market,
+        "get_article": get_yandex_market_article_from_url,
         "wait_tag": '[data-auto="productCardTitle"]',
         "warmup_time": 25
     },

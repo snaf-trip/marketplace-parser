@@ -52,6 +52,7 @@ def parse_product_page(driver, url, config):
         parsed["артикул"] = config["get_article"](url)
     elif domain == "yandex.ru":
         parsed = config["parser"](driver)
+        parsed["артикул"] = config["get_article"](url)
     else:
         parsed = {}
 

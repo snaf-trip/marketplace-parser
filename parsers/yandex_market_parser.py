@@ -29,14 +29,5 @@ def parse_yandex_market(driver):
     except:
         pass
 
-    specs = driver.find_elements(By.CSS_SELECTOR, 'span[data-auto="product-spec"]')
-    for spec in specs:
-        if "Артикул" in spec.text:
-            parent = spec.find_element(By.XPATH, "../..")
-            for sp in parent.find_elements(By.TAG_NAME, "span"):
-                if sp.text.strip().isdigit():
-                    data["артикул"] = sp.text.strip()
-                    break
-
     return data
 
