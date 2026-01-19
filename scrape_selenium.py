@@ -6,133 +6,14 @@
 
 import time
 import random
-from urllib.parse import urlparse
 import tldextract
 import pandas as pd
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 import undetected_chromedriver as uc
 
-
-# ---------------------------
-# Парсеры маркетплейсов
-# ---------------------------
-
-def parse_ozon(driver):
-    data = {"название": "", "цена": "", "оценка": "", "артикул": ""}
-
-    try:
-        data["название"] = driver.find_element(By.TAG_NAME, "h1").text.strip()
-    except:
-        pass
-
-    for el in driver.find_elements(By.TAG_NAME, "span"):
-        txt = el.text.strip()
-        if "₽" in txt:
-            data["цена"] = txt
-            break
-
-    for el in driver.find_elements(By.TAG_NAME, "div"):
-        txt = el.text.strip()
-        if "•" in txt and "отзыв" in txt:
-            data["оценка"] = txt.split("•")[0].strip()
-            break
-
-    for el in driver.find_elements(By.TAG_NAME, "div"):
-        txt = el.text.strip()
-        if txt.startswith("Артикул"):
-            data["артикул"] = txt.replace("Артикул:", "").strip()
-            break
-
-    return data
-
-
-def parse_wildberries(driver):
-    data = {"название": "", "цена": "", "оценка": "", "артикул": ""}
-
-    # 1) название (h3 с классом productTitle)
-    try:
-        el_name = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "h3.productTitle--J2W7I")
-            )
-        )
-        data["название"] = el_name.text.strip()
-    except:
-        pass
-
-    # 2) цена (h2 с классом productPrice)
-    try:
-        el_price = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "h2.mo-typography_variant_title2.mo-typography_color_danger")
-            )
-        )
-        data["цена"] = el_price.text.strip()
-    except:
-        pass
-
-    # 3) оценка (span с классом productReviewRating)
-    try:
-        el_rating = driver.find_element(
-            By.CSS_SELECTOR, "span.productReviewRating--gQDQG"
-        )
-        data["оценка"] = el_rating.text.split("·")[0].strip()  # только рейтинг, без кол-ва оценок
-    except:
-        pass
-
-    # 4) артикул — часто последний span с цифрами длиннее 6
-    try:
-        spans = driver.find_elements(By.TAG_NAME, "span")
-        for sp in spans[::-1]:  # идем с конца страницы
-            txt = sp.text.strip()
-            if txt.isdigit() and len(txt) >= 6:
-                data["артикул"] = txt
-                break
-    except:
-        pass
-
-    return data
-
-
-def parse_yandex_market(driver):
-    data = {"название": "", "цена": "", "оценка": "", "артикул": ""}
-
-    try:
-        data["название"] = driver.find_element(
-            By.CSS_SELECTOR, 'h1[data-auto="productCardTitle"]'
-        ).text.strip()
-    except:
-        pass
-
-    try:
-        data["цена"] = driver.find_element(
-            By.CSS_SELECTOR, 'span[data-auto="snippet-price-current"]'
-        ).text.replace("\n", "").strip()
-    except:
-        pass
-
-    try:
-        data["оценка"] = driver.find_element(
-            By.CSS_SELECTOR, 'span[data-auto="ratingValue"]'
-        ).text.strip()
-    except:
-        pass
-
-    specs = driver.find_elements(By.CSS_SELECTOR, 'span[data-auto="product-spec"]')
-    for spec in specs:
-        if "Артикул" in spec.text:
-            parent = spec.find_element(By.XPATH, "../..")
-            for sp in parent.find_elements(By.TAG_NAME, "span"):
-                if sp.text.strip().isdigit():
-                    data["артикул"] = sp.text.strip()
-                    break
-
-    return data
-
+from parsers.wb_parser import parse_wildberries
+from parsers.ozon_parser import parse_ozon
+from parsers.yandex_market_parser import parse_yandex_market
 
 # ---------------------------
 # Утилиты
@@ -160,12 +41,13 @@ def parse_product_page(driver, url):
     # )
 
     domain = get_root_domain(url)
+    print(domain)
 
     if domain == "ozon.ru":
         parsed = parse_ozon(driver)
     elif domain == "wildberries.ru":
         parsed = parse_wildberries(driver)
-    elif domain == "market.yandex.ru":
+    elif domain == "yandex.ru":
         parsed = parse_yandex_market(driver)
     else:
         parsed = {}
@@ -212,7 +94,7 @@ def main():
     # for site in ["https://www.ozon.ru", "https://www.wildberries.ru", "https://market.yandex.ru"]:
     for site in ["https://www.wildberries.ru"]:
         driver.get(site)
-        time.sleep(random.uniform(4, 6))
+        time.sleep(25)
 
     results = []
 
