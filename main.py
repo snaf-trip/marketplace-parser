@@ -39,10 +39,6 @@ def parse_product_page(driver, url):
 
     driver.get(url)
 
-    # WebDriverWait(driver, 20).until(
-    #     EC.presence_of_element_located((By.TAG_NAME, "h1"))
-    # )
-
     domain = get_root_domain(url)
     print(domain)
 
@@ -100,7 +96,6 @@ def main():
     driver = uc.Chrome(options=options)
 
     # 🔥 Прогрев
-    # for site in ["https://www.ozon.ru", "https://www.wildberries.ru", "https://market.yandex.ru"]:
     for site in [config["base_url"]]:
         driver.get(site)
         time.sleep(25)
