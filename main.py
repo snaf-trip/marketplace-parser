@@ -44,17 +44,8 @@ def parse_product_page(driver, url, config):
     domain = get_root_domain(url)
     print(domain)
 
-    if domain == "ozon.ru":
-        parsed = config["parser"](driver)
-        parsed["артикул"] = config["get_article"](url)
-    elif domain == "wildberries.ru":
-        parsed = config["parser"](driver)
-        parsed["артикул"] = config["get_article"](url)
-    elif domain == "yandex.ru":
-        parsed = config["parser"](driver)
-        parsed["артикул"] = config["get_article"](url)
-    else:
-        parsed = {}
+    parsed = config["parser"](driver)
+    parsed["артикул"] = config["get_article"](url)
 
     for k in ["название", "цена", "оценка", "артикул"]:
         data[k] = parsed.get(k, "")
