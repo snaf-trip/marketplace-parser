@@ -22,11 +22,5 @@ def parse_ozon(driver):
             data["оценка"] = txt.split("•")[0].strip()
             break
 
-    for el in driver.find_elements(By.TAG_NAME, "div"):
-        txt = el.text.strip()
-        if txt.startswith("Артикул"):
-            data["артикул"] = txt.replace("Артикул:", "").strip()
-            break
-
     return data
 
