@@ -45,12 +45,13 @@ def parse_product_page(driver, url, config):
     print(domain)
 
     if domain == "ozon.ru":
-        parsed = parse_ozon(driver)
+        parsed = config["parser"](driver)
+        parsed["артикул"] = config["get_article"](url)
     elif domain == "wildberries.ru":
-        parsed = parse_wildberries(driver)
+        parsed = config["parser"](driver)
         parsed["артикул"] = config["get_article"](url)
     elif domain == "yandex.ru":
-        parsed = parse_yandex_market(driver)
+        parsed = config["parser"](driver)
     else:
         parsed = {}
 

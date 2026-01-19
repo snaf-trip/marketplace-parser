@@ -1,3 +1,4 @@
+from get_ozon_article_from_url import get_ozon_article_from_url
 from parsers.ozon_parser import parse_ozon
 from parsers.wb_parser import parse_wildberries
 from parsers.yandex_market_parser import parse_yandex_market
@@ -8,6 +9,7 @@ MARKETPLACE_CONFIG = {
         "domain": "ozon.ru",
         "base_url": "https://www.ozon.ru",
         "parser": parse_ozon,
+        "get_article": get_ozon_article_from_url,
         "wait_tag": "h1",
         "warmup_time": 25,
     },
