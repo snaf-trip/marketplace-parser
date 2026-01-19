@@ -1,6 +1,7 @@
 from parsers.ozon_parser import parse_ozon
 from parsers.wb_parser import parse_wildberries
 from parsers.yandex_market_parser import parse_yandex_market
+from get_wb_article_from_url import get_wb_article_from_url
 
 MARKETPLACE_CONFIG = {
     "ozon": {
@@ -14,6 +15,7 @@ MARKETPLACE_CONFIG = {
         "domain": "wildberries.ru",
         "base_url": "https://www.wildberries.ru",
         "parser": parse_wildberries,
+        "get_article": get_wb_article_from_url,
         "wait_tag": "h3",
         "warmup_time": 25,
     },

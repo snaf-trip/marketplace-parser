@@ -18,6 +18,8 @@ from parsers.yandex_market_parser import parse_yandex_market
 from ask_marketplace import ask_marketplace
 from markets_config import  MARKETPLACE_CONFIG
 
+from get_wb_article_from_url import get_wb_article_from_url
+
 # ---------------------------
 # Утилиты
 # ---------------------------
@@ -27,7 +29,7 @@ def get_root_domain(url: str) -> str:
     return f"{ext.domain}.{ext.suffix}" if ext.suffix else ext.domain
 
 
-def parse_product_page(driver, url):
+def parse_product_page(driver, url, config):
     data = {
         "название": "",
         "цена": "",
@@ -46,6 +48,7 @@ def parse_product_page(driver, url):
         parsed = parse_ozon(driver)
     elif domain == "wildberries.ru":
         parsed = parse_wildberries(driver)
+        parsed["артикул"] = config["get_article"](url)
     elif domain == "yandex.ru":
         parsed = parse_yandex_market(driver)
     else:
@@ -111,7 +114,7 @@ def main():
     try:
         for i, url in enumerate(urls, 1):
             print(f"\n[{i}/{len(urls)}] {url}")
-            row = parse_product_page(driver, url)
+            row = parse_product_page(driver, url, config)
 
             print("  Название:", row["название"] or "<нет>")
             print("  Цена   :", row["цена"] or "<нет>")

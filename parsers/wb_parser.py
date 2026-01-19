@@ -37,15 +37,5 @@ def parse_wildberries(driver):
     except:
         pass
 
-    # 4) артикул — часто последний span с цифрами длиннее 6
-    try:
-        spans = driver.find_elements(By.TAG_NAME, "span")
-        for sp in spans[::-1]:  # идем с конца страницы
-            txt = sp.text.strip()
-            if txt.isdigit() and len(txt) >= 6:
-                data["артикул"] = txt
-                break
-    except:
-        pass
 
     return data
