@@ -15,6 +15,9 @@ from parsers.wb_parser import parse_wildberries
 from parsers.ozon_parser import parse_ozon
 from parsers.yandex_market_parser import parse_yandex_market
 
+from ask_marketplace import ask_marketplace
+from markets_config import  MARKETPLACE_CONFIG
+
 # ---------------------------
 # Утилиты
 # ---------------------------
@@ -66,6 +69,12 @@ def main():
     print("=== Парсер маркетплейсов ===")
     urls = []
 
+    marketplace = ask_marketplace()
+    config = MARKETPLACE_CONFIG[marketplace]
+
+    print(f"\n✅ Выбран маркетплейс: {marketplace}")
+
+
     while True:
         u = input(f"Ссылка #{len(urls)+1}: ").strip()
         if not u or u.lower() == "done":
@@ -92,9 +101,15 @@ def main():
 
     # 🔥 Прогрев
     # for site in ["https://www.ozon.ru", "https://www.wildberries.ru", "https://market.yandex.ru"]:
-    for site in ["https://www.wildberries.ru"]:
+    for site in [config["base_url"]]:
         driver.get(site)
         time.sleep(25)
+
+    # 1. Пользователь выбирает с каким маркет плейсом работает
+    # 2. скидывает артикли через запятую или ссылки оставить...?
+    # 3. ссылки мы потом создаём сами используя артикль и константу url
+    # 4. с прогревом тоже становится удобнее работать благодаря первому пункту
+
 
     results = []
 
