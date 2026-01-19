@@ -1,6 +1,6 @@
 def ask_marketplace():
     print("\nС каким маркетплейсом вы будете работать?")
-    print("1 — Ozon")
+    print("1 — Ozon (не работает пепе шнеле...)")
     print("2 — Wildberries")
     print("3 — Yandex Market")
 
