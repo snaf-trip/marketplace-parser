@@ -10,7 +10,7 @@ def parse_wildberries(driver):
     try:
         el_name = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "h3.productTitle--J2W7I")
+                (By.CSS_SELECTOR, "h3.productTitle--lfc4o")
             )
         )
         data["название"] = el_name.text.strip()
@@ -31,7 +31,7 @@ def parse_wildberries(driver):
     # 3) оценка (span с классом productReviewRating)
     try:
         el_rating = driver.find_element(
-            By.CSS_SELECTOR, "span.productReviewRating--gQDQG"
+            By.CSS_SELECTOR, "span.productReviewRating--PD7fr"
         )
         data["оценка"] = el_rating.text.split("·")[0].strip()  # только рейтинг, без кол-ва оценок
     except:

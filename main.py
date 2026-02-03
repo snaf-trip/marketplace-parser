@@ -83,7 +83,7 @@ def main():
     )
 
     print("\nЗапуск браузера...")
-    driver = uc.Chrome(options=options)
+    driver = uc.Chrome(version_main=144, options=options)
 
     # 🔥 Прогрев
     for site in [config["base_url"]]:
